@@ -22,12 +22,13 @@ import debugInfo.DIScopeOpaqueRef
 import llvm.LLVMAddNamedMetadataOperand
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.KonanVersion
 
 
 internal object DWARF {
     val DW_LANG_kotlin                 = 1 //TODO: we need own constant e.g. 0xbabe
     /* TODO: konanc version should be generated somehere and reused here. */
-    val producer                       = "konanc EAP 0.1 / kotlin-compiler: ${KotlinVersion.CURRENT}"
+    val producer                       = "konanc ${KonanVersion.CURRENT} / kotlin-compiler: ${KotlinVersion.CURRENT}"
     /* TODO: from LLVM sources is unclear what runtimeVersion coresponds to term in dwarf specification. */
     val runtimeVersion                 = 2
     val dwarfVersionMetaDataNodeName   = "Dwarf Name".mdString()
