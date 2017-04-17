@@ -146,6 +146,24 @@ List<String> llvmLinkerOpts() {
     return res
 }
 
+List<String> wholeArchive(List<String> opts) {
+    if (isMac()) {
+        return ["-Wl,-all_load"] + opts
+    }
+    if (isLinux()) {
+        return ["-Wl,--whole-archive"] + opts + ["-Wl,--no-whole-archive"]
+    }
+
+}
+
+List<String> debugInfoLinkerOpts() {
+    def opts = wholeArchive(["-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static", "-ldebugInfo"])
+    if (isLinux()) {
+        return opts + ["-lLLVMCore", "-lLLVMSupport"]
+    }
+    return opts
+}
+
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
@@ -154,16 +172,12 @@ kotlinNativeInterop {
    }
 
    debugInfo {
-     def ldFlags = ["-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static", "-ldebugInfo"]
      dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
      defFile '../llvmDebugInfoC/debugInfo.def'
      compilerOpts "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
-     if (isMac()) {
-        linkerOpts = ["-Wl,-all_load"] + ldFlags
-     }
+     linkerOpts debugInfoLinkerOpts()
      if (isLinux()) {
-       linker 'clang++'
-       linkerOpts = ["-Wl,--whole-archive"] + ldFlags + ["-Wl,--no-whole-archive", "-lLLVMCore", "-lLLVMSupport"]
+         linker 'clang++'
      }
    }
 
