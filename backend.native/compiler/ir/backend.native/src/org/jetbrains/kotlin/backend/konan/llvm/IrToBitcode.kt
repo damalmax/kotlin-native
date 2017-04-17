@@ -1670,7 +1670,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-    private inline fun <T> debugInfo(element: IrElement, body:() -> T):T {
+    private inline fun <T> debugInfo(element: IrElement, body:() -> T): T {
         debugLocation(element)
         val result = body()
         codegen.resetDebugLocation()
@@ -1678,7 +1678,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-    private fun IrFile.file():debugInfo.DIFileRef {
+    private fun IrFile.file(): debugInfo.DIFileRef {
         return context.debugInfo.files.getOrPut(this) {
             val path = this.fileEntry.name.split("/")
             debugInfo.DICreateFile(context.debugInfo.builder, path.last(), path.dropLast(1).joinToString("/"))!!
