@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.backend.konan.KonanVersion
 
 internal object DWARF {
     val DW_LANG_kotlin                 = 1 //TODO: we need own constant e.g. 0xbabe
-    /* TODO: konanc version should be generated somehere and reused here. */
     val producer                       = "konanc ${KonanVersion.CURRENT} / kotlin-compiler: ${KotlinVersion.CURRENT}"
-    /* TODO: from LLVM sources is unclear what runtimeVersion coresponds to term in dwarf specification. */
+    /* TODO: from LLVM sources is unclear what runtimeVersion corresponds to term in terms of dwarf specification. */
     val runtimeVersion                 = 2
     val dwarfVersionMetaDataNodeName   = "Dwarf Name".mdString()
     val dwarfDebugInfoMetaDataNodeName = "Debug Info Version".mdString()
