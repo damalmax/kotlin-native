@@ -23,6 +23,7 @@ import llvm.LLVMAddNamedMetadataOperand
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.KonanVersion
+import java.io.File
 
 
 internal object DWARF {
@@ -37,19 +38,22 @@ internal object DWARF {
 
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
+        val path = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE)
+        val absolutePath = File(path).absolutePath
+        val pathElements = absolutePath.split("/")
         @Suppress("UNCHECKED_CAST")
         context.debugInfo.module = DICreateModule(
                 builder = context.debugInfo.builder,
                 scope = context.llvmModule as DIScopeOpaqueRef,
-                name = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE)!!,
+                name = absolutePath,
                 configurationMacro = "",
                 includePath = "",
                 iSysRoot = "")
         context.debugInfo.compilationModule = DICreateCompilationUnit(
                 builder = context.debugInfo.builder,
                 lang = DWARF.DW_LANG_kotlin,
-                File = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE)!!,
-                dir = "",
+                File = pathElements.last(),
+                dir = pathElements.dropLast(1).joinToString("/"),
                 producer = DWARF.producer,
                 isOptimized = 0,
                 flags = "",
