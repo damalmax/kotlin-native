@@ -538,9 +538,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
             using(VariableScope()) {
                 when (body) {
-                    is IrBlockBody -> body.statements.forEach { generateStatement(it) }
+                    is IrBlockBody      -> body.statements.forEach { generateStatement(it) }
                     is IrExpressionBody -> generateStatement(body.expression)
-                    is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
+                    is IrSyntheticBody  -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
                     else -> TODO(ir2string(body))
                 }
             }
@@ -1227,8 +1227,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val srcWidth = LLVMGetIntTypeWidth(llvmSrcType)
             val dstWidth = LLVMGetIntTypeWidth(llvmDstType)
             return@debugInfo when {
-                srcWidth == dstWidth -> result
-                srcWidth > dstWidth -> LLVMBuildTrunc(codegen.builder, result, llvmDstType, "")!!
+                srcWidth == dstWidth           -> result
+                srcWidth > dstWidth            -> LLVMBuildTrunc(codegen.builder, result, llvmDstType, "")!!
                 else /* srcWidth < dstWidth */ -> LLVMBuildSExt(codegen.builder, result, llvmDstType, "")!!
             }
         }
