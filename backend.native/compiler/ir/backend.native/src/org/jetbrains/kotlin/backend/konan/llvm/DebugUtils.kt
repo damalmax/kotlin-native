@@ -38,7 +38,6 @@ internal object DWARF {
 
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainDebugInfo()) {
-        @Suppress("UNCHECKED_CAST")
         context.debugInfo.module = DICreateModule(
                 builder = context.debugInfo.builder,
                 scope = context.llvmModule as DIScopeOpaqueRef,
@@ -56,25 +55,25 @@ internal fun generateDebugInfoHeader(context: Context) {
                 flags = "",
                 rv = DWARF.runtimeVersion)
         /* TODO: figure out what here 2 means:
-             *
-             * 0:b-backend-dwarf:minamoto@minamoto-osx(0)# cat /dev/null | clang -xc -S -emit-llvm -g -o - -
-             * ; ModuleID = '-'
-             * source_filename = "-"
-             * target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
-             * target triple = "x86_64-apple-macosx10.12.0"
-             *
-             * !llvm.dbg.cu = !{!0}
-             * !llvm.module.flags = !{!3, !4, !5}
-             * !llvm.ident = !{!6}
-             *
-             * !0 = distinct !DICompileUnit(language: DW_LANG_C99, file: !1, producer: "Apple LLVM version 8.0.0 (clang-800.0.38)", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !2)
-             * !1 = !DIFile(filename: "-", directory: "/Users/minamoto/ws/.git-trees/backend-dwarf")
-             * !2 = !{}
-             * !3 = !{i32 2, !"Dwarf Version", i32 2}              ; <-
-             * !4 = !{i32 2, !"Debug Info Version", i32 700000003} ; <-
-             * !5 = !{i32 1, !"PIC Level", i32 2}
-             * !6 = !{!"Apple LLVM version 8.0.0 (clang-800.0.38)"}
-             */
+         *
+         * 0:b-backend-dwarf:minamoto@minamoto-osx(0)# cat /dev/null | clang -xc -S -emit-llvm -g -o - -
+         * ; ModuleID = '-'
+         * source_filename = "-"
+         * target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
+         * target triple = "x86_64-apple-macosx10.12.0"
+         *
+         * !llvm.dbg.cu = !{!0}
+         * !llvm.module.flags = !{!3, !4, !5}
+         * !llvm.ident = !{!6}
+         *
+         * !0 = distinct !DICompileUnit(language: DW_LANG_C99, file: !1, producer: "Apple LLVM version 8.0.0 (clang-800.0.38)", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !2)
+         * !1 = !DIFile(filename: "-", directory: "/Users/minamoto/ws/.git-trees/backend-dwarf")
+         * !2 = !{}
+         * !3 = !{i32 2, !"Dwarf Version", i32 2}              ; <-
+         * !4 = !{i32 2, !"Debug Info Version", i32 700000003} ; <-
+         * !5 = !{i32 1, !"PIC Level", i32 2}
+         * !6 = !{!"Apple LLVM version 8.0.0 (clang-800.0.38)"}
+         */
         val llvmTwo = Int32(2).llvm
         val dwarfVersion = node(llvmTwo, DWARF.dwarfVersionMetaDataNodeName, Int32(DWARF.dwarfVersion).llvm)
         val nodeDebugInfoVersion = node(llvmTwo, DWARF.dwarfDebugInfoMetaDataNodeName, Int32(DWARF.debugInfoVersion).llvm)
