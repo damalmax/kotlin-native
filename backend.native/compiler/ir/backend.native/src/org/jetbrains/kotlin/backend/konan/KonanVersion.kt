@@ -19,10 +19,18 @@ package org.jetbrains.kotlin.backend.konan
 /**
  *  https://en.wikipedia.org/wiki/Software_versioning
  *  scheme major.minor[.build[.revision]].
- */
-class KonanVersion(val meta: String?, val major: Int, val minor: Int, val maintenance: Int, val build:Int) {
+*/
+
+enum class MetaVersion {
+  EAP,
+  ALPHA,
+  BETA,
+  RC
+}
+
+class KonanVersion(val meta: MetaVersion?, val major: Int, val minor: Int, val maintenance: Int, val build:Int) {
     companion object {
-        val CURRENT = KonanVersion("EAP", 0, 1, 0, 0)
+        val CURRENT = KonanVersion(MetaVersion.EAP, 0, 1, 0, 0)
     }
     override fun toString() = if (meta != null) "$meta $major.$minor.$maintenance.$build" else "$major.$minor.$maintenance.$build"
 }
