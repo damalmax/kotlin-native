@@ -1190,22 +1190,21 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateTypeOperator(value: IrTypeOperatorCall): LLVMValueRef {
-        debugInfo(value) {
+        return debugInfo(value) {
             when (value.operator) {
-                IrTypeOperator.CAST                      -> return evaluateCast(value)
-                IrTypeOperator.IMPLICIT_INTEGER_COERCION -> return evaluateIntegerCoercion(value)
-                IrTypeOperator.IMPLICIT_CAST             -> return evaluateExpression(value.argument)
+                IrTypeOperator.CAST                      -> evaluateCast(value)
+                IrTypeOperator.IMPLICIT_INTEGER_COERCION -> evaluateIntegerCoercion(value)
+                IrTypeOperator.IMPLICIT_CAST             -> evaluateExpression(value.argument)
                 IrTypeOperator.IMPLICIT_NOTNULL          -> TODO(ir2string(value))
                 IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                     evaluateExpression(value.argument)
-                    return codegen.theUnitInstanceRef.llvm
+                    return@debugInfo codegen.theUnitInstanceRef.llvm
                 }
                 IrTypeOperator.SAFE_CAST                 -> throw IllegalStateException("safe cast wasn't lowered")
-                IrTypeOperator.INSTANCEOF                -> return evaluateInstanceOf(value)
-                IrTypeOperator.NOT_INSTANCEOF            -> return evaluateNotInstanceOf(value)
+                IrTypeOperator.INSTANCEOF                -> evaluateInstanceOf(value)
+                IrTypeOperator.NOT_INSTANCEOF            -> evaluateNotInstanceOf(value)
             }
         }
-        TODO()
     }
 
     //-------------------------------------------------------------------------//
