@@ -1647,23 +1647,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-    private fun IrElement.line():Int {
-        try {
-            return file().fileEntry.getLineNumber(this.startOffset)
-        }
-        catch (ignored: Exception) {
-            return -1
-        }
+    private fun IrElement.line(): Int {
+      return if (this.startOffset < 0)
+                -1
+	      else
+	         file().fileEntry.getLineNumber(this.startOffset)
     }
 
     //-------------------------------------------------------------------------//
-    private fun IrElement.column():Int {
-        try {
-            return file().fileEntry.getColumnNumber(this.startOffset)
-        }
-        catch (ignored: Exception) {
-            return -1
-        }
+    private fun IrElement.column(): Int {
+      return if (this.startOffset < 0)
+                -1
+	      else
+	         file().fileEntry.getColumnNumber(this.startOffset)
     }
 
     //-------------------------------------------------------------------------//
