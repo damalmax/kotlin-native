@@ -1165,25 +1165,22 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun generateVariable(value: IrVariable) {
         context.log("generateVariable               : ${ir2string(value)}")
         val result = value.initializer?.let { evaluateExpression(it) }
-        val index = currentCodeContext.genDeclareVariable(value.descriptor, result)
+        val variableDescriptor = value.descriptor
+        val index = currentCodeContext.genDeclareVariable(variableDescriptor, result)
         if (context.shouldContainDebugInfo()) {
             val location = debugLocation(value)
             val functionScope = (currentCodeContext.functionScope() as FunctionScope).declaration?.scope() ?: return
             val file = (currentCodeContext.fileScope() as FileScope).file.file()
-            val variableDeclaration = DICreateAutoVariable(
-                    builder = context.debugInfo.builder,
-                    scope   = functionScope,
-                    name    = value.descriptor.name.asString(),
-                    file    = file,
-                    line    = value.line(),
-                    type    = value.descriptor.diType)
             val variable = codegen.vars.load(index)
-            DIInsertDeclarationWithEmptyExpression(
-                    builder       = context.debugInfo.builder,
-                    value         = variable,
-                    localVariable = variableDeclaration,
-                    location      = location,
-                    bb            = LLVMGetInsertBlock(codegen.builder))
+            val line = value.line()
+            codegen.vars.debugInfoLocalVariableLocation(
+                    functionScope = functionScope,
+                    diType        = variableDescriptor.diType,
+                    name          = variableDescriptor.name,
+                    variable      = variable,
+                    file          = file,
+                    line          = line,
+                    location      = location)
         }
     }
 
