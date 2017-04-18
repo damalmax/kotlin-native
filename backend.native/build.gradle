@@ -150,7 +150,7 @@ kotlinNativeInterop {
    llvm {
      dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
      defFile 'llvm.def'
-     compilerOpts "-fPIC", "-I$llvmDir/include"
+     compilerOpts "-fPIC", "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include"
      linkerOpts llvmLinkerOpts()
    }
 
