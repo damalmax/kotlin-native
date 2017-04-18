@@ -269,7 +269,8 @@ internal class LinkStage(val context: Context) {
 
         runTool(*linkCommand.toTypedArray())
         if (platform is MacOSPlatform && context.shouldContainDebugInfo()) {
-            runTool(*platform.dsymutilDryRunVerboseCommand(executable).toTypedArray())
+            if (context.phase.verbose)
+                runTool(*platform.dsymutilDryRunVerboseCommand(executable).toTypedArray())
             runTool(*platform.dsymutilCommand(executable).toTypedArray())
         }
 
