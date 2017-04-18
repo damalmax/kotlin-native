@@ -1,5 +1,0 @@
-headers = DebugInfoC.h
-
-compilerOpts=-fPIC
-compilerOpts.osx = -IllvmDebugInfoC/include -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include
-compilerOpts.linux = -IllvmDebugInfoC/include -Idependencies/all/clang+llvm-3.9.0-linux-x86-64/include
