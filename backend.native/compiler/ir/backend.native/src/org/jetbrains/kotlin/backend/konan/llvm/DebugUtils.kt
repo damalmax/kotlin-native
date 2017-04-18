@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import debugInfo.DICreateCompilationUnit
-import debugInfo.DICreateModule
-import debugInfo.DIScopeOpaqueRef
+import llvm.DICreateCompilationUnit
+import llvm.DICreateModule
+import llvm.DIScopeOpaqueRef
 import llvm.LLVMAddNamedMetadataOperand
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys

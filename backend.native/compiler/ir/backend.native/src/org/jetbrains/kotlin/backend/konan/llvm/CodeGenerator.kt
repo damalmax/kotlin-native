@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 
-import debugInfo.DILocationRef
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
@@ -497,15 +496,13 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     internal fun resetDebugLocation() {
         if (!context.shouldContainDebugInfo()) return
-        @Suppress("UNCHECKED_CAST")
-        debugInfo.LLVMBuilderResetDebugLocation(builder as debugInfo.LLVMBuilderRef)
+        LLVMBuilderResetDebugLocation(builder)
     }
 
-    @Suppress("UNCHECKED_CAST")
     internal fun debugLocation(locationInfo: LocationInfo):DILocationRef? {
         if (!context.shouldContainDebugInfo()) return null
-        return debugInfo.LLVMBuilderSetDebugLocation(
-                builder as debugInfo.LLVMBuilderRef,
+        return LLVMBuilderSetDebugLocation(
+                builder,
                 locationInfo.line,
                 locationInfo.column,
                 locationInfo.scope)
