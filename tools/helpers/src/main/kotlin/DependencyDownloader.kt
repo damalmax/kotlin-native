@@ -94,10 +94,13 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
                     val entry = from.currentEntry
                     val targetFilePath = Paths.get(targetDir, entry.name)
 
+                    val entryMode = entry.mode
                     if (entry.isDirectory) {
                         Files.createDirectories(targetFilePath)
+                        setFilePermissions(targetFilePath, entryMode)
                         continue
                     }
+
                     if (entry.isSymbolicLink) {
                         Files.createSymbolicLink(targetFilePath, Paths.get(entry.linkName))
                         continue
@@ -110,6 +113,7 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
                             to.write(buffer, 0, count);
                         }
                     }
+                    setFilePermissions(targetFilePath, entryMode)
                 }
             }
         } catch (e: Exception) {
