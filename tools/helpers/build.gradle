@@ -58,6 +58,7 @@ configurations {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
+    compile "org.apache.commons:commons-compress:$commons_compress_version"
     // We need this configuration to test the helpers.
     cli_bc jar.outputs.files
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')

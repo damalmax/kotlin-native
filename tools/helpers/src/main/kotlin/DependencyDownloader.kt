@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.konan
 
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import java.io.*
 import java.net.URL
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.Properties
 import kotlin.concurrent.thread
 
 // TODO: Try to use some dependency management system (Ivy?)
@@ -84,14 +86,34 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
     }
 
     private fun extract(tarGz: File, target: File) {
-        println("Extract dependency: ${tarGz.canonicalPath} in ${target.canonicalPath}")
-        val tarProcess = ProcessBuilder().apply {
-            command("tar", "-xzf", "${tarGz.canonicalPath}")
-            directory(target)
-        }.start()
-        tarProcess.waitFor()
-        if (tarProcess.exitValue() != 0) {
-            throw RuntimeException("Cannot extract archive with dependency: ${tarGz.canonicalPath}")
+        val targetDir = target.absolutePath;
+        println("Extract dependency: ${tarGz.canonicalPath} in $targetDir")
+        try {
+            TarArchiveInputStream(GzipCompressorInputStream(FileInputStream(tarGz))).use { from ->
+                while (from.nextEntry != null) {
+                    val entry = from.currentEntry
+                    val targetFilePath = Paths.get(targetDir, entry.name)
+
+                    if (entry.isDirectory) {
+                        Files.createDirectories(targetFilePath)
+                        continue
+                    }
+                    if (entry.isSymbolicLink) {
+                        Files.createSymbolicLink(targetFilePath, Paths.get(entry.linkName))
+                        continue
+                    }
+
+                    FileOutputStream(targetFilePath.toFile()).use { to ->
+                        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                        var count: Int = 0
+                        while ({ count = from.read(buffer, 0, DEFAULT_BUFFER_SIZE); count }() != -1) {
+                            to.write(buffer, 0, count);
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            throw RuntimeException("Cannot extract archive with dependency: ${tarGz.canonicalPath}", e)
         }
     }
 
